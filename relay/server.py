@@ -97,7 +97,7 @@ class App:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "webhook2nats/1.0"
+    server_version = "webhook2nats/1.1"
     protocol_version = "HTTP/1.1"
     app = None  # 由 serve() 注入
 

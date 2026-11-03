@@ -20,7 +20,7 @@
 #
 # 它仍是移动指针：**同一个名字不保证永远是同一个镜像**。要可复现、可回滚
 # 就钉小版本：
-#   image: ghcr.io/sopyk/webhook2nats:1.0
+#   image: ghcr.io/sopyk/webhook2nats:1.1
 # 取舍见 docs/operations.md「镜像 tag 的选择与风险」。
 #
 # ⚠️ 单实例约束（硬约束，不是建议）

@@ -11,6 +11,20 @@
 
 ---
 
+## 1.1.0
+
+### 修复
+
+- **新建 Issue 正文里的 @ 提及终于能唤醒 Agent 了。** 此前 mentions 只从
+  `issue_comment` / `review` 的正文里抽取，新建 Issue（`issues` 事件，
+  动作 `opened`）的正文 `@` 一路被静默丢弃 ——「有人开新 Issue 正文 @ 某家」
+  时 relay 拿不到目标、门铃不发出、订阅的 Agent 没被唤醒。现在 content-bearing
+  动作（`opened` / `reopened` / `edited`）会从正文抽 `@` 提及进 mentions，
+  定向门铃 `evt.gitea.notify.<host>.<id>` 正常发出；评论 / 评审 / assignee
+  的既有行为保持不变。
+
+---
+
 ## 1.0.0
 
 第一个正式版。

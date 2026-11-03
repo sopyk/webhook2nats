@@ -15,6 +15,21 @@ numbers are deliberately not hardcoded anywhere else.
 
 ---
 
+## 1.1.0
+
+### Fixed
+
+- **Mentions in newly created Issue bodies now wake the agent.** Previously
+  mentions were only extracted from comment / review bodies; the bodies of
+  `issues` events (opened / edited / reopened) were silently dropped, so an
+  "@someone" in a brand-new Issue never produced a bell — the relay had no
+  target, no `evt.gitea.notify.<host>.<id>` was published, and subscribed agents
+  never woke. Now mentions are extracted from the body for content-bearing
+  actions (`opened` / `reopened` / `edited`) and flow into the targeted bell
+  again; comment / review / assignee behavior is unchanged.
+
+---
+
 ## 1.0.0
 
 First stable release.

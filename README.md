@@ -24,7 +24,7 @@ docker pull ghcr.io/sopyk/webhook2nats:latest
 |---|---|
 | 仓库 | **`ghcr.io/sopyk/webhook2nats`**（GitHub Container Registry，公开、匿名可拉） |
 | 架构 | `linux/amd64` + `linux/arm64` |
-| 稳定版 | `:latest`、`:1.0`、`:1.0.0`、`v1.0.0` |
+| 稳定版 | `:latest`、`:1.1`、`:1.1.0`、`v1.1.0` |
 | 预发布 | `:X.Y.Z-rcN` 之类的预发布号 —— **不会**移动 `:latest` |
 
 > 上面刻意写成 `X.Y.Z-rcN` 而不是具体版本：文档里出现字面量版本号，
@@ -39,7 +39,7 @@ docker pull ghcr.io/sopyk/webhook2nats:latest
 
 ```bash
 curl -s localhost:8090/version
-# {"status":"ok","version":"1.0.0","commit":"22c6f52…","started_at":…,"uptime_seconds":…}
+# {"status":"ok","version":"1.1.0","commit":"22c6f52…","started_at":…,"uptime_seconds":…}
 ```
 
 ---

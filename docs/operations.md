@@ -276,7 +276,7 @@ docker compose logs -f
 | GitHub Container Registry | `ghcr.io/sopyk/webhook2nats` | 每次构建（含分支构建） |
 | Docker Hub | `sopyk/webhook2nats` | **仅正式版 git tag 推送** |
 
-Docker Hub 只收正式版，三个理由：那边的第一个镜像应当是干净的 `1.0.0`
+Docker Hub 只收正式版，三个理由：那边的第一个镜像应当是干净的 `1.1.0`
 而不是分支 tag；分支/RC 构建频率高，会在 Docker Hub 上堆一串没人要的 tag；
 少一个凭据暴露面（分支构建可能来自他人的 PR，压根不需要 DockerHub 凭据）。
 
@@ -311,7 +311,7 @@ Actions 里有 `DOCKERHUB_USERNAME` 与 `DOCKERHUB_TOKEN` 两条 secret。
 | 写法 | 优点 | 风险 |
 |---|---|---|
 | `:latest`（默认） | 不用想版本；**只跟正式版走，不会拉到测试版** | **是移动指针**——同一个名字不保证是同一个镜像。NAS 自动更新、重启重建、或将来加了 `pull_policy: always` 时，可能悄悄换成没测过的版本 |
-| `:1.0` 小版本 | 可复现、可回滚 | 忘了同步 tag 就会一直用旧版，而且**每次发版都要记得改 compose** |
+| `:1.1` 小版本 | 可复现、可回滚 | 忘了同步 tag 就会一直用旧版，而且**每次发版都要记得改 compose** |
 | `:<git-sha>` | 最精确，能追到具体 commit | 不好记，镜像列表会很长 |
 | `none` + 手动 `docker tag` | 完全自控 | 每次升级都多一步手工操作 |
 
@@ -323,7 +323,7 @@ Actions 里有 `DOCKERHUB_USERNAME` 与 `DOCKERHUB_TOKEN` 两条 secret。
 compose 里一个版本号都不写。
 
 代价是失去可复现性，这一条我们不粉饰：如果你要「同一份配置在任何时候
-拉到的都是同一个镜像」，就该把 compose 的 image 改成 `:1.0`（或别的钉法），
+拉到的都是同一个镜像」，就该把 compose 的 image 改成 `:1.1`（或别的钉法），
 并接受发版时多一步手工更新。
 
 **`:latest` 不会拿到测试版。** CI 里有断言强制：预发布（`rc` / `beta` /

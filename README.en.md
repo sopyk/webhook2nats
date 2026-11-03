@@ -32,7 +32,7 @@ docker pull ghcr.io/sopyk/webhook2nats:latest
 |---|---|
 | Registry | **`ghcr.io/sopyk/webhook2nats`** (GitHub Container Registry, public, anonymous pulls) |
 | Architectures | `linux/amd64` + `linux/arm64` |
-| Stable | `:latest`, `:1.0`, `:1.0.0`, `v1.0.0` |
+| Stable | `:latest`, `:1.1`, `:1.1.0`, `v1.1.0` |
 | Pre-release | e.g. `:X.Y.Z-rcN` — **does not move** `:latest` |
 
 `:latest` follows stable releases only. Pre-release tags never move it, so a
@@ -43,7 +43,7 @@ To find out which version you are running:
 
 ```bash
 curl -s localhost:8090/version
-# {"status":"ok","version":"1.0.0","commit":"22c6f52…","started_at":…,"uptime_seconds":…}
+# {"status":"ok","version":"1.1.0","commit":"22c6f52…","started_at":…,"uptime_seconds":…}
 ```
 
 ---
