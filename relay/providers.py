@@ -199,6 +199,24 @@ def normalize_gitea(payload, kind, action):
         api = _login_list(rev.get("mentions"))
         ev["mentions"] = sorted(set(api) | set(extract_mentions(_text(rev.get("content")))))
 
+    # 新建 / 编辑 / 重开的 Issue（kind == "issue"）的正文 @ 提及也要进 mentions。
+    #
+    # 此前只从 comment / review 正文抽 mentions —— issues 事件根本没有
+    # comment / review 对象，正文里的 @ 全被静默丢掉。于是「有人开新 Issue
+    # 正文 @ 某家」时，evt.gitea.notify.<host>.<id> 没有任何定向目标可发，
+    # 各 Agent 的守护器收不到门铃、不会唤起。
+    #
+    # 只在内容类动作上生效（opened / edited / reopened）——issues 事件还会
+    # 覆盖 closed / assigned / labeled / transfer 等动作，只在正文真正变化的
+    # 动作上解析提及，别让「关掉一个 Issue」本身变成一次门铃。
+    #
+    # kind 与 comment / review 完全不同，不会和上面的分支再撞车；对
+    # kind == "issue" 而言 comment/review 本来就不会出现，所以这里并上去
+    # 与既有行为兼容（mentions 可能尚未初始化）。
+    if kind == "issue" and action in ("opened", "reopened", "edited"):
+        body_mentions = extract_mentions(_text(obj.get("body")))
+        ev["mentions"] = sorted(set(ev.get("mentions") or []) | set(body_mentions))
+
     if reviewers:
         ev["reviewers"] = sorted(set(r for r in reviewers if isinstance(r, str) and r))
 

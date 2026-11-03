@@ -229,5 +229,5 @@ python3 test_logs.py          # logging: degradation, privacy, rate limits, rota
 python3 test_e2e.py           # simulation: keep-alive / injection / concurrency / real NATS
 ```
 
-**278 tests**, none of which need real NATS or internet (`test_e2e.py` spins up
+**283 tests**, none of which need real NATS or internet (`test_e2e.py` spins up
 its own container). See the [testing notes](docs/operations.md#测试).

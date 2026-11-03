@@ -216,5 +216,5 @@ python3 test_logs.py          # 日志：降级、隐私、限流、轮转
 python3 test_e2e.py           # 仿真：keep-alive / 注入 / 并发 / 真实 NATS
 ```
 
-共 **278 条**，不需要真实 NATS 或外网（`test_e2e.py` 会自己拉一个容器）。
+共 **283 条**，不需要真实 NATS 或外网（`test_e2e.py` 会自己拉一个容器）。
 详见 [测试说明](docs/operations.md#测试)。

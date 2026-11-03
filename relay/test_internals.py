@@ -164,6 +164,58 @@ class NormalizeTest(unittest.TestCase):
                        "issue_comment")
         self.assertEqual(len(ev["title"]), providers_mod.MAX_TITLE_CHARS)
 
+    def test_issue_body_mentions_are_extracted(self):
+        """新建 Issue 正文里的 @ 提及必须进 mentions —— issues 事件无 comment/review。
+
+        此前只从 comment / review 正文抽 mentions，issues 事件（opened /
+        edited / reopened）的正文 @ 一路被静默丢掉。于是「有人开新 Issue
+        正文 @ 某家」时 evt.gitea.notify 没有定向目标可发 → 门铃不唤起。
+        """
+        issue = fixtures._issue(title="接入新 Agent", number=301)
+        issue["body"] = "请 @mayaoyao 跟踪，@madeng 一起看"
+        ev = self.norm(fixtures.issue_event(action="opened", issue=issue, actor="maker"),
+                       "issue")
+        self.assertEqual(ev["kind"], "issue")
+        self.assertEqual(ev["action"], "opened")
+        # mentions 是 sorted（sorted(set(api) | set(正文抽的))），断言按字母序写
+        self.assertEqual(ev["mentions"], ["madeng", "mayaoyao"])
+
+    def test_issue_body_mentions_are_deduped_and_sorted(self):
+        issue = fixtures._issue(title="多人讨论", number=302)
+        issue["body"] = "@bob 先看，@carol 跟进，@bob 再看一版"
+        ev = self.norm(fixtures.issue_event(action="edited", issue=issue, actor="maker"),
+                       "issue")
+        self.assertEqual(ev["mentions"], ["bob", "carol"])
+
+    def test_issue_without_body_has_no_mentions(self):
+        """obj 没有 body（部分事件形状）也要兜底，不能抛错、不能进脏值。"""
+        issue = fixtures._issue(title="无正文", number=303)
+        issue["body"] = None
+        ev = self.norm(fixtures.issue_event(action="opened", issue=issue, actor="maker"),
+                       "issue")
+        self.assertEqual(ev["mentions"], [])
+
+    def test_issue_close_action_does_not_extract_mentions(self):
+        """issues 事件还覆盖 closed/assign/labeled —— 只有内容类动作才解析正文 @。
+
+        关掉一个 Issue 本身不算「正文 @ 有变」，绝不该因此触发一次门铃。
+        """
+        issue = fixtures._issue(title="旧工单", number=304)
+        issue["body"] = "@bob 看看"
+        ev = self.norm(fixtures.issue_event(action="closed", issue=issue, actor="maker"),
+                       "issue")
+        self.assertEqual(ev["kind"], "issue")
+        self.assertEqual(ev["action"], "closed")
+        self.assertNotIn("mentions", ev)
+
+    def test_pull_request_body_mentions_are_not_extracted(self):
+        """本次修复只针对 kind == "issue" 的内容类动作 —— PR 行为保持原样，不动。"""
+        pr = fixtures._pull_request()
+        pr["body"] = "@bob 帮忙看"
+        ev = self.norm(fixtures.pull_request_event(action="opened", pr=pr), "pull_request")
+        self.assertEqual(ev["kind"], "pull_request")
+        self.assertNotIn("mentions", ev)
+
     def test_malformed_payload_does_not_crash(self):
         for payload in ({}, {"repository": None, "sender": None},
                         {"issue": None, "comment": {}},
