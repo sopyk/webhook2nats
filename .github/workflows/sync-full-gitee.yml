@@ -19,7 +19,7 @@ jobs:
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
-          git remote add gitee "https://x-access-token:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
+          git remote add gitee "https://${{ secrets.GITEE_USERNAME }}:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
           git push gitee --mirror
 
   sync_release:
@@ -42,5 +42,5 @@ jobs:
           echo "同步标签: $TAG"
 
           # 将 tag 推到 Gitee（触发 Gitee 的 release 联动）
-          git remote add gitee "https://x-access-token:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
+          git remote add gitee "https://${{ secrets.GITEE_USERNAME }}:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
           git push gitee "$TAG"
