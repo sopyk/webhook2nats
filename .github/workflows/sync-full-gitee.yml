@@ -15,15 +15,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 确保 dev 分支在本地存在（main 触发时 dev 不在工作树里）
-        run: git fetch origin dev:dev
-
       - name: Mirror all branches and tags to Gitee
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           git remote add gitee "https://${{ secrets.GITEE_USERNAME }}:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
-          git push gitee main dev --tags
+          git push gitee 'refs/remotes/origin/main:refs/heads/main' 'refs/remotes/origin/dev:refs/heads/dev' --tags
 
   sync_release:
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
