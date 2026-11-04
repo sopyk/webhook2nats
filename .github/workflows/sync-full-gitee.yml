@@ -15,7 +15,6 @@ jobs:
         with:
           src: github/${{ secrets.GH_USERNAME }}
           dst: gitee/${{ secrets.GITEE_USERNAME }}
-          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
           static_list: "${{ github.event.repository.name }}"
           clone_style: https
