@@ -11,24 +11,36 @@ jobs:
   mirror_code:
     runs-on: ubuntu-latest
     steps:
-      - uses: Yikun/hub-mirror-action@v1
+      - uses: actions/checkout@v4
         with:
-          src: github/${{ secrets.GH_USERNAME }}
-          dst: gitee/${{ secrets.GITEE_USERNAME }}
-          dst_token: ${{ secrets.GITEE_TOKEN }}
-          static_list: "${{ github.event.repository.name }}"
-          clone_style: https
-          force_update: true
+          fetch-depth: 0
+
+      - name: Mirror all branches and tags to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          git remote add gitee "https://x-access-token:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
+          git push gitee --mirror
 
   sync_release:
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     needs: mirror_code
     runs-on: ubuntu-latest
     steps:
-      - uses: trustedinster/sync-release-gitee@v1.3
-        with:
-          gitee_owner: ${{ secrets.GITEE_USERNAME }}
-          gitee_repo: ${{ github.event.repository.name }}
-          gitee_token: ${{ secrets.GITEE_TOKEN }}
-          github_owner: ${{ secrets.GH_USERNAME }}
-          github_repo: ${{ github.event.repository.name }}
+      - uses: actions/checkout@v4
+
+      - name: Sync latest release to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          # 读取 GitHub Release 信息
+          TAG="${{ github.event.release.tag_name }}"
+          if [ -z "$TAG" ]; then
+            # workflow_dispatch 情况下获取最新 tag
+            TAG=$(git describe --tags --abbrev=0)
+          fi
+          echo "同步标签: $TAG"
+
+          # 将 tag 推到 Gitee（触发 Gitee 的 release 联动）
+          git remote add gitee "https://x-access-token:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
+          git push gitee "$TAG"
