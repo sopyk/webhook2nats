@@ -20,7 +20,7 @@ jobs:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           git remote add gitee "https://${{ secrets.GITEE_USERNAME }}:${GITEE_TOKEN}@gitee.com/sopyk/webhook2nats.git"
-          git push gitee --mirror
+          git push gitee main dev --tags
 
   sync_release:
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
