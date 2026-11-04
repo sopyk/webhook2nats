@@ -15,8 +15,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 拉取所有远程分支（确保 dev 在 main 触发时也可推送）
-        run: git fetch origin '+refs/heads/*:refs/heads/*'
+      - name: 确保 dev 分支在本地存在（main 触发时 dev 不在工作树里）
+        run: git fetch origin dev:dev
 
       - name: Mirror all branches and tags to Gitee
         env:
