@@ -15,6 +15,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 拉取所有远程分支（确保 dev 在 main 触发时也可推送）
+        run: git fetch origin '+refs/heads/*:refs/heads/*'
+
       - name: Mirror all branches and tags to Gitee
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
@@ -28,11 +31,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Sync latest release to Gitee
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
+          git fetch origin --tags
+
           # 读取 GitHub Release 信息
           TAG="${{ github.event.release.tag_name }}"
           if [ -z "$TAG" ]; then
